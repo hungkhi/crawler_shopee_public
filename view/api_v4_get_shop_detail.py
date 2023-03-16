@@ -38,7 +38,7 @@ class ShopParams(BaseModel):
 class ShopDetailCrawler:
     def __init__(self):
         self.basepath = os.path.abspath(os.path.dirname(__file__))
-        self.shop_detail_api = "https://shopee.tw/api/v4/shop/get_shop_base?entry_point=ShopByPDP&need_cancel_rate=true&request_source=shop_home_page&version=1&username="
+        self.shop_detail_api = "https://shopee.co.th/api/v4/shop/get_shop_base?entry_point=ShopByPDP&need_cancel_rate=true&request_source=shop_home_page&version=1&username="
         self.shop_detail = []
 
         today = datetime.datetime.now()
@@ -78,7 +78,7 @@ class ShopDetailCrawler:
         async def main(crawler_shop_urls):
             headers = {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                "referer": "https://shopee.tw/",
+                "referer": "https://shopee.co.th/",
                 "X-Requested-With": "XMLHttpRequest",
             }
             async with aiohttp.ClientSession(

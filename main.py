@@ -3,9 +3,12 @@ from view.utils import timer
 from view.check_ip_pool import CheckIPAddress
 from view.api_v4_get_shop_detail import ShopDetailCrawler
 from view.api_v4_get_product_detail import ProductDetailCrawler
-
+from view.get_shop_name_from_json import get_values
+import json
 
 import logging
+import schedule
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -52,31 +55,26 @@ class Crawler:
 
 
 if __name__ == "__main__":
-
+    # Load JSON file into a Python object
+    with open('view/Shops.json', 'r') as f:
+        json_obj = json.load(f)
     # Insert your email and the shop names you want to crawl
     user_list = [
         {
             "user_info": {
-                "Email": "a0025071@gmail.com",
-                "Name": "Max",
+                "Email": "thanghungkhi@gmail.com",
+                "Name": "Hung",
             },
-            "input_shop_names": [
-                "fulinxuan",
-                "pat6116xx",
-                "join800127",
-                "ginilin0982353562",
-                "ru8285fg56",
-                "wangshutung",
-                "taiwan88888",
-                "baoshenfg",
-                "cyf66666",
-                "buddha8888",
-                "dragon9168",
-                "sinhochen77",
-                "jouhsuansu",
-            ],
+            # "input_shop_names": get_values(json_obj, 'username'),
+            "input_shop_names": ['kissmybody_official'],
         }
     ]
 
-    do = Crawler(user_list[0])
-    do()
+    # do = Crawler(user_list[0])
+
+    # do()
+    schedule.every().hour.do(Crawler(user_list[0]))
+
+    while True:
+        schedule.run_pending()
+        time.sleep(5)

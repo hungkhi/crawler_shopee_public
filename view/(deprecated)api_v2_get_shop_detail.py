@@ -12,7 +12,7 @@ class CrawlerShopDetail:
     def __init__(self):
         self.basepath = os.path.abspath(os.path.dirname(__file__))
 
-        self.shop_detail_api = "https://shopee.tw/api/v2/shop/get?shopid="
+        self.shop_detail_api = "https://shopee.vn/api/v2/shop/get?shopid="
 
         self.shop_detail_dict = {
             "shop_name": [],  # 商家名稱

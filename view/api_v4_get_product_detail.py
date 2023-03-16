@@ -11,12 +11,15 @@ import pandas as pd
 
 from pydantic import BaseModel
 
-logger = logging.getLogger(__name__)
+import datetime
 
+
+logger = logging.getLogger(__name__)
 
 class ItemParams(BaseModel):
     itemid: str
     shopid: int
+    catid: int
     name: str
     currency: str
     stock: int
@@ -67,7 +70,7 @@ class ProductDetailCrawler:
     def __init__(self):
         self.basepath = os.path.abspath(os.path.dirname(__file__))
 
-        self.search_item_api = "https://shopee.tw/api/v4/shop/search_items"
+        self.search_item_api = "https://shopee.co.th/api/v4/shop/search_items"
         self.items_list = []
 
         today = datetime.datetime.now()
@@ -116,7 +119,7 @@ class ProductDetailCrawler:
         async def main(crawler_itme_urls):
             headers = {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                "referer": "https://shopee.tw/",
+                "referer": "https://shopee.co.th/",
                 "X-Requested-With": "XMLHttpRequest",
             }
             async with aiohttp.ClientSession(
@@ -147,10 +150,12 @@ class ProductDetailCrawler:
                 num += 100
             asyncio.run(main(crawler_itme_urls))
 
-            logger.info(f"└── add Product Page Detail: {shop_product_count}")
+            logger.info(f"└── add Product Page Detail: {shop_product_count} {shop_id}")
         df = pd.DataFrame(self.items_list)
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         df.to_csv(
-            self.basepath + "/csv/pdp_detail.csv",
+            self.basepath + "/csv/pdp_detail"+current_time+".csv",
             index=False,
             mode="a",
             header=False,

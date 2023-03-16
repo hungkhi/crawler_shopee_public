@@ -10,7 +10,7 @@ import pandas as pd
 class CrawlerProductId:
     def __init__(self):
         self.basepath = os.path.abspath(os.path.dirname(__file__))
-        self.product_id_api = "https://shopee.tw/api/v2/search_items/?by=price&order=asc&page_type=shop&version=2&limit=100"
+        self.product_id_api = "https://shopee.vn/api/v2/search_items/?by=price&order=asc&page_type=shop&version=2&limit=100"
 
         self.product_id_dict = {
             "shopid": [],  # 商家id
@@ -42,7 +42,7 @@ class CrawlerProductId:
         async def main(crawler_product_urls):
             headers = {
                 "User-Agent": "Googlebot",
-                "Referer": "https://shopee.tw/shop/22189057/search",
+                "Referer": "https://shopee.vn/shop/22189057/search",
                 "X-Requested-With": "XMLHttpRequest",
             }
             async with aiohttp.ClientSession(
@@ -76,7 +76,7 @@ class CrawlerProductId:
         df = pd.DataFrame(self.product_id_dict)
 
         df["url"] = (
-            "https://shopee.tw/api/v2/item/get?itemid="
+            "https://shopee.vn/api/v2/item/get?itemid="
             + df["itemid"].astype(str)
             + "&shopid="
             + df["shopid"].astype(str)
