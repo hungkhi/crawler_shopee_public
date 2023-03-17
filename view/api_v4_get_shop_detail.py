@@ -80,6 +80,7 @@ class ShopDetailCrawler:
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
                 "referer": "https://shopee.co.th/",
                 "X-Requested-With": "XMLHttpRequest",
+                "cookie": "__LOCALE__null=TH; csrftoken=w0EC8v4SDEWsvObJy44KH8vMG02f5B5R; _gcl_au=1.1.253236186.1678987039; SPC_SI=HToQZAAAAAB2cG05RmFNZO3jTwAAAAAAWThNb3RxS2Y=; _fbp=fb.2.1678987040408.502461095; _QPWSDCXHZQA=0b3c871c-2348-4eac-df8b-e3761f81dbd5; SPC_F=VaTVUKbCpeqhfc1Mmctb6YTCOg1tW9mz; REC_T_ID=695ee964-c41e-11ed-8210-68e209fbba3c; SPC_R_T_ID=b8Dsr6UiBbdVR13N2RWGkP6iUMCqW3LGeo4f9SIG/r1AVj7rvIgXXtPX4Ssw0D/O2LOZt98UnZu5Vo5xgJ7oO98w0t8dgtIxG8ut0TnujhZ/fLnoM/Llr2ce6JoAGzNnhWNkJ304Y3R45N20f5SCI9ZsPxC9nQblRxmDCdL090g=; SPC_R_T_IV=Q05WZUFrU29qQURsY1J0VA==; SPC_T_ID=b8Dsr6UiBbdVR13N2RWGkP6iUMCqW3LGeo4f9SIG/r1AVj7rvIgXXtPX4Ssw0D/O2LOZt98UnZu5Vo5xgJ7oO98w0t8dgtIxG8ut0TnujhZ/fLnoM/Llr2ce6JoAGzNnhWNkJ304Y3R45N20f5SCI9ZsPxC9nQblRxmDCdL090g=; SPC_T_IV=Q05WZUFrU29qQURsY1J0VA==; _gid=GA1.3.961084277.1678987043; language=en; _ga=GA1.1.2019951774.1678987042; _ga_L4QXS6R7YG=GS1.1.1678987042.1.1.1678987515.50.0.0"
             }
             async with aiohttp.ClientSession(
                 connector=aiohttp.TCPConnector(ssl=False, limit=100),
@@ -97,6 +98,7 @@ class ShopDetailCrawler:
         asyncio.run(main(crawler_shop_urls))
 
         df = pd.DataFrame(self.shop_detail)
+        logger.debug(df)
         df.to_csv(self.basepath + "/csv/shop_detail.csv", index=False)
         logger.debug(df)
         return df

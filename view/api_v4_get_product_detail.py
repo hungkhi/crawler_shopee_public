@@ -8,15 +8,16 @@ import datetime
 
 import aiohttp
 import pandas as pd
+from openpyxl import load_workbook
 
 from pydantic import BaseModel
 
 import datetime
 
-
 logger = logging.getLogger(__name__)
 
 class ItemParams(BaseModel):
+    link: str
     itemid: str
     shopid: int
     catid: int
@@ -26,10 +27,10 @@ class ItemParams(BaseModel):
     status: int
     ctime: int
     t_ctime: str
-    sold: int
+    # sold: int
     historical_sold: int
     liked_count: int
-    brand: str
+    # brand: str
     cmt_count: int
     item_status: str
     price: int
@@ -46,21 +47,21 @@ class ItemParams(BaseModel):
     rating_star_4: int
     rating_star_5: int
     item_type: int
-    is_adult: bool
-    has_lowest_price_guarantee: bool
-    is_official_shop: bool
-    is_cc_installment_payment_eligible: bool
-    is_non_cc_installment_payment_eligible: bool
-    is_preferred_plus_seller: bool
-    is_mart: bool
-    is_on_flash_sale: bool
-    is_service_by_shopee: bool
-    shopee_verified: bool
-    show_official_shop_label: bool
-    show_shopee_verified_label: bool
-    show_official_shop_label_in_title: bool
-    show_free_shipping: bool
-    insert_date: str
+    # is_adult: bool
+    # has_lowest_price_guarantee: bool
+    # is_official_shop: bool
+    # is_cc_installment_payment_eligible: bool
+    # is_non_cc_installment_payment_eligible: bool
+    # is_preferred_plus_seller: bool
+    # is_mart: bool
+    # is_on_flash_sale: bool
+    # is_service_by_shopee: bool
+    # shopee_verified: bool
+    # show_official_shop_label: bool
+    # show_shopee_verified_label: bool
+    # show_official_shop_label_in_title: bool
+    # show_free_shipping: bool
+    # insert_date: str
 
     class Config:
         allow_extra = False
@@ -88,9 +89,13 @@ class ProductDetailCrawler:
 
                     dateArray = datetime.datetime.utcfromtimestamp(item["ctime"])
                     transfor_time = dateArray.strftime("%Y-%m-%d %H:%M:%S")
-
+                    item["price"] = item["price"]/100000
+                    item["price_min"] = item["price_min"]/100000
+                    item["price_max"] = item["price_max"]/100000
+                    item["price_before_discount"] = item["price_before_discount"]/100000
                     item_info = ItemParams(
                         **item,
+                        link=f"https://shopee.co.th/{item['name']}-i.{item['shopid']}.{item['itemid']}",
                         t_ctime=transfor_time,
                         insert_date=self.today_date,
                         rating_star_avg=item["item_rating"]["rating_star"],
@@ -121,6 +126,7 @@ class ProductDetailCrawler:
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
                 "referer": "https://shopee.co.th/",
                 "X-Requested-With": "XMLHttpRequest",
+                "cookie": "REC_T_ID=25ad7882-c0ac-11ed-94ae-f898efc71612; SPC_F=kfYIY6X7s82zWvXPbrLPkbDkCZzBA2uJ; __LOCALE__null=TH; _gcl_au=1.1.1467039043.1678864569; _fbp=fb.2.1678864569081.675076186; csrftoken=U0cWcwWjBTUwX2nftX8xxoER0OszglAh; _QPWSDCXHZQA=f4c0ae4d-bebf-4b09-cf0d-766c9ffb6259; SPC_SI=GzoQZAAAAABDSTcxZHlraB3CHgAAAAAAcVB1OXgyRTQ=; _gid=GA1.3.1878277686.1678864570; language=en; _med=refer; SPC_CLIENTID=a2ZZSVk2WDdzODJ6zitlgagripicfcsn; SPC_ST=.M1dlMEpHQ0pCYzNzTmFNWKaoA8eYimGZehvoyFQjkz+n18LY7DfJRtuq5BGFu0BekVBfZeiWHUsZNZGMJwdGfq52jf8OLjZhYKLwOJO6DCisGL4/L8n5d/e+iHojvIwInYqizeoc2AjPH3+XLZY7jy4XAOgUJhxH6QUBX8QTpYp4arlUOzsr/MqoNnKjgOE/pAJvj1eWpJffqPumLBJL0w==; SPC_U=969871636; SPC_T_ID=WJOeWA41czCW/fC7zkUPkgwzmzeD/IwS8CfEDmlnmQEuasvOdyatIE2JnQyPM8YjtnE9oTZk+F+JVP/5qdve2INWpLWcHZOjq2myTHRC673C4TL+uyUtyld1lB8nLRGCj8rlueOnby0SMYPJM6x/SnreN91XnvDFWURSWRU+Th0=; SPC_T_IV=d2c3T2JRNWpmZ2VXUkhjUA==; SPC_R_T_ID=WJOeWA41czCW/fC7zkUPkgwzmzeD/IwS8CfEDmlnmQEuasvOdyatIE2JnQyPM8YjtnE9oTZk+F+JVP/5qdve2INWpLWcHZOjq2myTHRC673C4TL+uyUtyld1lB8nLRGCj8rlueOnby0SMYPJM6x/SnreN91XnvDFWURSWRU+Th0=; SPC_R_T_IV=d2c3T2JRNWpmZ2VXUkhjUA==; AMP_TOKEN=%24NOT_FOUND; _ga=GA1.1.310384165.1678864570; shopee_webUnique_ccd=MgTzBPggpeyJGPMb0AZGjg%3D%3D%7C1VpxUy6Pbhne10ot2IaOff8hBAF21D51VV1kW97jiSIEJywK2WkOb1qCqmFCkJ1bvaOPVVYdQIN60wT6kUW0x7OPw2LZadQDtbM%3D%7CKHCVjYf%2FVLPDHHV1%7C06%7C3; ds=6bc0cbab1c7a72d5a8188035da0cbd2b; _ga_L4QXS6R7YG=GS1.1.1679048940.8.1.1679049499.44.0.0; SPC_EC=SVA5b3lKcHRtelJQNUNsVKnLrwdZGW5jQt+zXqQY9nizYWzdWZB9Qs1B9ft8owpucbrVUr7qiu54cGwCSMb6qH+AfocJaro87NfjgAK7VbL0BK6J5xKpbrNsapRKF+cgHt7mwvU49IX/ijeleQ8YUrjeHIbja2xcHgHi/MKqFEc="
             }
             async with aiohttp.ClientSession(
                 connector=aiohttp.TCPConnector(ssl=False, limit=10),
@@ -152,7 +158,7 @@ class ProductDetailCrawler:
 
             logger.info(f"└── add Product Page Detail: {shop_product_count} {shop_id}")
         df = pd.DataFrame(self.items_list)
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
         df.to_csv(
             self.basepath + "/csv/pdp_detail"+current_time+".csv",
@@ -160,6 +166,16 @@ class ProductDetailCrawler:
             mode="a",
             header=False,
         )
+
+        # create a Pandas Excel writer using xlsxwriter engine
+        writer = pd.ExcelWriter("/Users/hungnguyen/Library/CloudStorage/GoogleDrive-thanghungkhi@gmail.com/My Drive/Ecom Data/data.xlsx", mode="a", engine='openpyxl')
+
+        # write the DataFrame to a new sheet in the Excel file
+        df.to_excel(writer, sheet_name=current_time)
+
+        # save the Excel file and close the writer
+        writer.save()
+
         return df
 
 

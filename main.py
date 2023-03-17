@@ -70,10 +70,11 @@ if __name__ == "__main__":
         }
     ]
 
-    # do = Crawler(user_list[0])
+    do = Crawler(user_list[0])
 
-    # do()
-    schedule.every().hour.do(Crawler(user_list[0]))
+    do()
+    
+    schedule.every().hours.do(Crawler(user_list[0]))
 
     while True:
         schedule.run_pending()
